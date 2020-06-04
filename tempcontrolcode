@@ -1,0 +1,26 @@
+import RPi.GPIO as GPIO
+import time
+import Adafruit_DHT
+DHT_SENSOR = Adafruit_DHT.DHT22
+DHT_PIN = 4
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False) 
+GPIO.setup(2,GPIO.OUT)
+GPIO.setup(16,GPIO.OUT)
+while True:
+    humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
+    if humidity is not None and temperature is not None:
+        print("Temp={0:0.1f}C Humidity={1:0.1f}%".format(temperature, humidity))
+    else:
+        print("Sensor failed")
+    if temperature > 24:
+        print("fan on")
+        GPIO.output(2,GPIO.HIGH)
+    if temperature < 23:
+        print("fan off")
+        GPIO.output(2,GPIO.LOW)
+    if temperature < 26.5:
+        GPIO.output(16,GPIO.LOW)
+    if temperature > 28:
+        GPIO.output(16,GPIO.HIGH)
+    time.sleep(2)
